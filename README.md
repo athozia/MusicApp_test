@@ -3,6 +3,8 @@
 *main source code is in src->main->java->tam->musicplayer
 *all in repository is the music application 
 
+**only prototype as a part of CPE333
+
 This music app contain 5 main component class 
 1. Playlist
 2. Track -> base track from stroage
