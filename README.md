@@ -1,7 +1,7 @@
 # MusicApp_test //only function and service
 
 *main source code is in src->main->java->tam->musicplayer
-*all in repository is the music application 
+*all in repository is the music application, only build and libs are not include
 
 **only prototype as a part of CPE333
 
