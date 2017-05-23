@@ -97,7 +97,6 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-
         //stopMedia();
         stopSelf();
     }

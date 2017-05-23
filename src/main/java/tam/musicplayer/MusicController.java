@@ -1,8 +1,8 @@
 package tam.musicplayer;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.widget.MediaController;
-
 import java.util.Random;
 
 /**
@@ -11,30 +11,49 @@ import java.util.Random;
 
 public class MusicController extends MediaController {
 
+    private MediaPlayerControl mPlayer;
     private boolean shuffle=false;
+
+    private int songPosn;
+    private int trackSize;
     private Random rand;
     rand = new Random();
+
 
     public MusicController(Context c){
         super(c);
     }
 
+    public MusicController(Context c,int size){
+        super(c);
+        trackSize = size;
+    }
+
     public void hide(){}
+
+
 
     public void playNext(){
         if(shuffle){
             int newSong = songPosn;
             while(newSong == songPosn){
-                newSong=rand.nextInt(songs.size());
+                newSong = rand.nextInt(trackSize); //need to get size
             }
             songPosn=newSong;
         }
         else{
             songPosn++;
-            if(songPosn >= songs.size())
+            if(songPosn >= trackSize) //need to get size
                 songPosn=0;
         }
-        playSong();
+        go();
+    }
+
+    public void playPrev(){
+        songPosn--;
+        if(songPosn < 0)
+            songPosn = trackSize-1;
+        go();
     }
 
     public void setShuffle(){
@@ -42,39 +61,32 @@ public class MusicController extends MediaController {
         else shuffle=true;
     }
 
-    public void playPrev(){
-        songPosn--;
-        if(songPosn < 0)
-            songPosn = songs.size()-1;
-        playSong();
-    }
-
     public int getPosn(){
-        return player.getCurrentPosition();
+        return mPlayer.getCurrentPosition();
     }
 
     public int getDur(){
-        return player.getDuration();
+        return mPlayer.getDuration();
     }
 
     public boolean isPng(){
-        return player.isPlaying();
+        return mPlayer.isPlaying();
     }
 
     public void pausePlayer(){
-        player.pause();
+        mPlayer.pause();
     }
 
     public void seek(int posn){
-        player.seekTo(posn);
+        mPlayer.seekTo(posn);
     }
 
     public void go(){
-        player.start();
+        mPlayer.start();
     }
 
     public void onCompletion(MediaPlayer mp) {
-        if(player.getCurrentPosition() > 0){
+        if(mPlayer.getCurrentPosition() > 0){
             mp.reset();
             playNext();
         }
