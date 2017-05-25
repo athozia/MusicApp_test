@@ -2,6 +2,7 @@
 
 *main source code is in src->main->java->tam->musicplayer
 *all in repository is the music application, only build and libs are not include
+***currenty, master is doommmmmmmmmmmmmmmmmm! -> use t_alternate and Mint instead till the master is fixed.
 
 **only prototype as a part of CPE333
 
@@ -14,5 +15,4 @@ This music app contain 5 main component class
 4. MusicPlayerService -> service for operation of music player
 5. MusicController -> music player basic function : play,pause,etc.
 
-But, this is a test work, so only MainActivity, MusicPlayerService and MusicController will be created and implemented (without NetworkContent and others GUI_Adapter)
-
+But, this is a test work, so only MainActivity, MusicPlayerService and MusicController will be created and implemented (without NetworkContent and others GUI_Adapter
