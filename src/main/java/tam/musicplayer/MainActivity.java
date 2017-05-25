@@ -80,13 +80,14 @@ public class MainActivity extends Activity{
         {
             while(cursor.moveToNext())
             {
+                int i =0;
                 long tid = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String ttitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String tartist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 String talbum = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
                 String tdescription = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
 
-
+                tracksList.add(new Track(tid, ttitle, tartist, talbum, tdescription));
             }
 
         }
