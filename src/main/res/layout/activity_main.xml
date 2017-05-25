@@ -1,128 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.nimitr.musicsix.MainActivity">
-
-    <ImageView
-        android:id="@+id/bg"
-        android:layout_width="384dp"
-        android:layout_height="510dp"
-        android:layout_above="@+id/latestAddedSongs"
-        android:background="@drawable/blackground"
-        android:scaleType="centerCrop"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
-
-    <ImageView
-        android:id="@+id/cover"
-        android:layout_width="200dp"
-        android:layout_height="210dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/cover"
-        tools:layout_editor_absoluteY="32dp"
-        tools:layout_editor_absoluteX="87dp" />
-
-    <ImageView
-        android:id="@+id/reg"
-        android:layout_width="422dp"
-        android:layout_height="130dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/shape_reg"
-        tools:layout_editor_absoluteY="380dp"
-        tools:layout_editor_absoluteX="-19dp" />
+    android:background="@drawable/blackground"
+    tools:context="tam.musicplayer.MainActivity">
 
     <TextView
-
-        android:layout_width="wrap_content"
+        android:id="@+id/track_title"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/musicName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Kimi no nawa"
-        android:textColor="#FFFFFF"
+        android:textColor="#FFFFFF99"
         android:textSize="20sp"
-        tools:layout_editor_absoluteY="252dp"
-        tools:layout_editor_absoluteX="132dp" />
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp" />
 
     <TextView
-        android:id="@+id/musicArtist"
-        android:layout_width="wrap_content"
+        android:id="@+id/track_artist"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Yourname"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        tools:layout_editor_absoluteY="276dp"
-        tools:layout_editor_absoluteX="146dp" />
-
-    <ImageView
-        android:id="@+id/note1"
-        android:layout_width="69dp"
-        android:layout_height="73dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/n1"
-        tools:layout_editor_absoluteY="7dp"
-        tools:layout_editor_absoluteX="253dp" />
-
-    <ImageView
-        android:id="@+id/note2"
-        android:layout_width="122dp"
-        android:layout_height="131dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/n2"
-        tools:layout_editor_absoluteY="176dp"
-        tools:layout_editor_absoluteX="35dp" />
-
-    <ImageButton
-        android:id="@+id/playButton"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:background="@drawable/play"
-        tools:layout_editor_absoluteY="345dp"
-        tools:layout_editor_absoluteX="117dp" />
-
-    <ImageButton
-        android:id="@+id/forward"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/f1"
-        tools:layout_editor_absoluteY="403dp"
-        tools:layout_editor_absoluteX="51dp" />
+        android:textColor="#FFFFFF99"
+        android:textSize="18sp"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/track_title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <ImageButton
         android:id="@+id/backward"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/f2"
+        android:background="@drawable/f1"
+
         tools:layout_editor_absoluteY="403dp"
-        tools:layout_editor_absoluteX="287dp" />
+        tools:layout_editor_absoluteX="51dp"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginTop="24dp"
+        android:layout_below="@+id/shuffle"
+        android:layout_toLeftOf="@+id/playButton"
+        android:layout_toStartOf="@+id/playButton" />
+
+    <ImageButton
+        android:id="@+id/forward"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/f2"
+
+        tools:layout_editor_absoluteY="403dp"
+        tools:layout_editor_absoluteX="287dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_alignTop="@+id/backward"
+        android:layout_toRightOf="@+id/playButton"
+        android:layout_toEndOf="@+id/playButton" />
 
     <ImageButton
         android:id="@+id/replay"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/replay_unselected"
+
         tools:layout_editor_absoluteY="470dp"
-        tools:layout_editor_absoluteX="78dp" />
+        tools:layout_editor_absoluteX="78dp"
+        android:layout_alignTop="@+id/playButton"
+        android:layout_alignRight="@+id/backward"
+        android:layout_alignEnd="@+id/backward" />
 
     <ImageButton
-        android:id="@+id/replay"
+        android:id="@+id/shuffle"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@drawable/shuffle_unselected"
-        tools:layout_editor_absoluteY="470dp"
-        tools:layout_editor_absoluteX="28dp" />
 
-</android.support.constraint.ConstraintLayout>
+        tools:layout_editor_absoluteY="470dp"
+        tools:layout_editor_absoluteX="28dp"
+        android:layout_alignTop="@+id/playButton"
+        android:layout_alignLeft="@+id/forward"
+        android:layout_alignStart="@+id/forward" />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+
+        android:background="@drawable/play"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="345dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:id="@+id/stop"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+
+        android:background="@drawable/stop"
+        tools:layout_editor_absoluteX="117dp"
+        tools:layout_editor_absoluteY="345dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/forward"
+        android:layout_alignStart="@+id/forward"
+        android:layout_marginBottom="9dp" />
+
+    /
+
+</RelativeLayout>
 

@@ -3,11 +3,13 @@ package tam.musicplayer;
 import java.util.ArrayList;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.app.Service;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
@@ -17,6 +19,7 @@ import android.os.PowerManager;
 import android.os.Binder;
 
 import java.io.IOException;
+import java.util.Random;
 
 
 /**
@@ -25,13 +28,19 @@ import java.io.IOException;
 
 public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, AudioManager.OnAudioFocusChangeListener{
 
-   // private final IBinder iBinder = new LocalBinder();
+    private final IBinder iBinder = new MediaBinder();
     private MediaPlayer mediaPlayer;
     private String mediaFile;
     private AudioManager audioManager;
     private boolean ongoingCall = false;
     private PhoneStateListener phoneStateListener;
     private TelephonyManager telephonyManager;
+    private int resumePosition;
+    private ArrayList<Track> tracks;
+    private int trackPosition;
+    private Track playingTrack;
+    private boolean shuffle=false;
+    private Random rand;
 
     /*private BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
         @Override
@@ -85,18 +94,16 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     }*/
 
 
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         //return iBinder;
-        return null;
+        return iBinder;
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        //playMedia(); MusicController c = new ...
-        // c.playMedia();
+        playMedia();
     }
 
     @Override
@@ -134,13 +141,13 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private boolean requestAudioFocus() {
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        /*int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             //Focus gained
             return true;
         }
         //Could not gain focus
-        return false;
+       */ return false;
     }
 
     private boolean removeAudioFocus() {
@@ -156,7 +163,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public void onCompletion(MediaPlayer mp) {
 
-        //stopMedia();
+        stopMedia();
         stopSelf();
     }
 
@@ -189,8 +196,9 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public int onStartCommand(Intent intent, int flags, int startID){
 
-        try{
+       try{
             mediaFile = intent.getExtras().getString("media");
+
 
         }catch (NullPointerException e)
         {
@@ -206,10 +214,29 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         {
             initMediaPlayer();
         }
+       initMediaPlayer();
 
-        return super.onStartCommand(intent,flags,startID);
+
+
+       return super.onStartCommand(intent,flags,startID);
 
     }
+
+    public void getTracksListFromMain(ArrayList<Track> getTracks)
+    {
+        tracks = getTracks;
+    }
+
+    ////////////service binder
+    public class MediaBinder extends Binder
+    {
+        public MusicPlayerService getService()
+        {
+            return MusicPlayerService.this;
+        }
+    }
+
+    ////////////////////////
 
     private void initMediaPlayer()
     {
@@ -224,7 +251,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.reset();
 
 
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        /*mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try
         {
             // Set the data source to the mediaFile location
@@ -233,16 +260,27 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         } catch (IOException e) {
             e.printStackTrace();
             stopSelf();
-        }
+        }*/
         mediaPlayer.prepareAsync();
     }
 
-    @Override
+
+
+    /*@Override
     public void onCreate()
     {
         super.onCreate();
-        //mediaPlayer = new MediaPlayer();
+        trackPosition = 0;
         initMediaPlayer();
+
+    }*/
+
+    @Override
+    public boolean onUnbind(Intent intent)
+    {
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        return false;
     }
 
     @Override
@@ -251,16 +289,123 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
         super.onDestroy();
         if(mediaPlayer != null)
         {
-            //stopMedia -> media controller
+            stopMedia();
             mediaPlayer.release();
         }
         removeAudioFocus();
     }
 
+    //after this-> play pause, stop, ... for basic -> controller handle much more interaction
 
 
-    //after this-> play pause, stop, ...
+    public void playTracks()
+    {
+        mediaPlayer.reset();
+        playingTrack = tracks.get(trackPosition);
+        long currSong = playingTrack.getId();
+        Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                currSong);
+        try{
+            mediaPlayer.setDataSource(getApplicationContext(), trackUri);
+        }
+        catch(Exception e){
+            Log.e("MUSIC SERVICE", "Error setting data source", e);
+        }
 
 
+        mediaPlayer.prepareAsync();
+    }
+
+
+    /////after this , actually will be in controller class, this is just a test
+
+    public void playMedia() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+    }
+
+    public void stopMedia() {
+        if (mediaPlayer == null) return;
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+        }
+    }
+
+    public void pauseMedia() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            resumePosition = mediaPlayer.getCurrentPosition();
+        }
+    }
+
+    public void resumeMedia() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo(resumePosition);
+            mediaPlayer.start();
+        }
+    }
+
+    public int getPosn(){
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    public int getDur(){
+        return mediaPlayer.getDuration();
+    }
+
+    public boolean isPng(){
+        return mediaPlayer.isPlaying();
+    }
+
+    public void pausePlayer(){
+        mediaPlayer.pause();
+    }
+
+    public void seek(int posn){
+        mediaPlayer.seekTo(posn);
+    }
+
+    public void go(){
+        mediaPlayer.start();
+    }
+
+    public void playNext()
+    {
+        trackPosition++;
+        if(trackPosition > tracks.size())
+        {
+            trackPosition = 0;
+        }
+        playTracks();
+    }
+
+    public void playPrev()
+    {
+        trackPosition--;
+        if(trackPosition < 0){
+            trackPosition = tracks.size() - 1;
+        }
+
+        playTracks();
+    }
+
+    public void replay()
+    {
+        stopMedia();
+        playMedia();
+    }
+
+    public void shuffle()
+    {
+        rand = new Random();
+        trackPosition = rand.nextInt(tracks.size());
+        playTracks();
+    }
+
+    public int getPosition()
+    {
+        return trackPosition;
+    }
 }
 
