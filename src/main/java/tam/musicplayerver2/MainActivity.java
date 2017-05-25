@@ -46,6 +46,8 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
     private ImageButton repeatButton = null;
     private ImageButton stopButton = null;
     private boolean isStarted = true;
+    private MusicController controller;
+    private boolean paused=false, playbackPaused=false;
 
 
     private ArrayList<Track> tracks;
@@ -92,9 +94,9 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
 
         Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 
-        if (null != cursor && cursor.moveToFirst() )
+        if (null != cursor /*&& cursor.moveToFirst() */)
         {
-           while(cursor.moveToNext()){
+           /*while(cursor.moveToNext()){
                 long tid = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String ttitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String tartist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
@@ -103,7 +105,7 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
                 n_t++;
 
                 tracks.add(new Track(tid, ttitle, tartist, talbum, tdescription));
-            }
+            }*/
 
             cursor.moveToFirst();
             mediaAdapter = new MediaCursorAdapter(this, R.layout.listitem, cursor);
@@ -117,6 +119,7 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
             stopButton.setOnClickListener(onButtonClick);
         }
 
+        //setController();   //still incompleted
     }
 ///////////////////////////////////service relation
 
@@ -180,6 +183,9 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
         selelctedFile.setText(file);
         seekbar.setProgress(0);
 
+        mediaplayer.stop();
+        mediaplayer.reset();
+
         try {
             mediaplayer.setDataSource(file);
             mediaplayer.prepare();
@@ -193,7 +199,7 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
         }
 
         seekbar.setMax(mediaplayer.getDuration());
-        playButton.setImageResource(android.R.drawable.ic_media_pause);
+        playButton.setImageResource(R.drawable.pause);
         updatePosition();
 
         isStarted = true;
@@ -202,7 +208,7 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
     public void stopPlay() {
         mediaplayer.stop();
         mediaplayer.reset();
-        playButton.setImageResource(android.R.drawable.ic_media_play);
+        playButton.setImageResource(R.drawable.play);
         handler.removeCallbacks(updatePositionRunnable);
         seekbar.setProgress(0);
 
@@ -219,6 +225,94 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
 
         handler.postDelayed(updatePositionRunnable, UPDATE_FREQUENCY);
     }
+
+
+    ///controller setup
+
+    /*private void setController()      -> caonnot use because it need API level 21 or higher
+    {
+        controller = new MusicController(this);
+        controller.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.play: {
+                        if (mediaplayer.isPlaying()) {
+                            handler.removeCallbacks(updatePositionRunnable);
+                            mediaplayer.pause();
+                            playButton.setImageResource(R.drawable.play);
+                        } else {
+                            if (isStarted) {
+                                mediaplayer.start();
+                                playButton.setImageResource(R.drawable.pause);
+
+                                updatePosition();
+                            } else {
+                                startPlay(currentFile);
+                            }
+                        }
+
+                        break;
+                    }
+                    case R.id.next: {
+                        int seekto = mediaplayer.getCurrentPosition() + STEP_VALUE;
+
+                        if (seekto > mediaplayer.getDuration())
+                            seekto = mediaplayer.getDuration();
+
+                        mediaplayer.pause();
+                        mediaplayer.seekTo(seekto);
+                        mediaplayer.start();
+
+
+
+
+                        break;
+                    }
+                    case R.id.prev: {
+                        int seekto = mediaplayer.getCurrentPosition() - STEP_VALUE;
+
+                        if (seekto < 0)
+                            seekto = 0;
+
+                        mediaplayer.pause();
+                        mediaplayer.seekTo(seekto);
+                        mediaplayer.start();
+
+                        break;
+                    }
+                    case R.id.repeat:{
+                        int seekto = 0;
+                        mediaplayer.pause();
+                        mediaplayer.seekTo(seekto);
+                        mediaplayer.start();
+
+                        break;
+                    }
+                    case R.id.stop:{
+                        //mediaplayer.stop();
+                        stopPlay();
+                        playButton.setImageResource(R.drawable.play);
+
+                    /*rand = new Random();
+                    int i = rand.nextInt(tracks.size() + 1);
+                    mediaplayer.start();*/
+           /*             break;
+
+                    }
+                }
+            }
+        });
+
+        controller.setMediaPlayer(this);
+       // controller.setAnchorView(findViewById(R.id.all));
+        controller.setEnabled(true);
+
+
+
+    }*/
+
 
 
     //////////////////provide control for user
@@ -278,6 +372,30 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
     }
 
     ///////////////////////////////////
+    ///check status
+/*
+    @Override
+    protected void onPause(){
+        super.onPause();
+        paused=true;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(paused){
+            setController();
+            paused=false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        controller.hide();
+        super.onStop();
+    }*/
+    ////////////
+
 
     private class MediaCursorAdapter extends SimpleCursorAdapter {
 
@@ -331,11 +449,11 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
                     if (mediaplayer.isPlaying()) {
                         handler.removeCallbacks(updatePositionRunnable);
                         mediaplayer.pause();
-                        playButton.setImageResource(android.R.drawable.ic_media_play);
+                        playButton.setImageResource(R.drawable.play);
                     } else {
                         if (isStarted) {
                             mediaplayer.start();
-                            playButton.setImageResource(android.R.drawable.ic_media_pause);
+                            playButton.setImageResource(R.drawable.pause);
 
                             updatePosition();
                         } else {
@@ -383,7 +501,7 @@ public class MainActivity extends ListActivity implements MediaController.MediaP
                 case R.id.stop:{
                     //mediaplayer.stop();
                     stopPlay();
-                    playButton.setImageResource(android.R.drawable.ic_media_play);
+                    playButton.setImageResource(R.drawable.play);
 
                     /*rand = new Random();
                     int i = rand.nextInt(tracks.size() + 1);

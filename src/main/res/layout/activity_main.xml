@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/blackground2"
     tools:context=".MainActivity">
 
     <ListView
@@ -18,7 +19,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorMenubar"
         android:orientation="vertical"
         android:padding="10dip">
 
@@ -28,57 +29,91 @@
             android:layout_height="wrap_content"
             android:ellipsize="middle"
             android:gravity="center_horizontal"
-            android:textColorLink="@color/colorAccent"
             android:singleLine="true"
-            android:text="Not file selected"
-            android:textColor="@android:color/black" />
+            android:text="No file selected"
+            android:textColor="@android:color/white"
+            android:textColorLink="@color/colorAccent"
+            android:textSize="18sp" />
 
         <SeekBar
             android:id="@+id/seekbar"
-
+            style="@android:style/Widget.DeviceDefault.Light.SeekBar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:max="100"
             android:paddingBottom="10dip" />
 
+
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorMenubar"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="1">
 
             <ImageButton
                 android:id="@+id/repeat"
-                android:layout_width="46dp"
-                android:layout_height="61dp"
-                android:src="@drawable/replay_unselected"
-                android:layout_weight="0.21" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/replay_unselected" />
+
+            <TextView
+                android:id="@+id/spce1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="   "
+                android:textColor="#759ba6"
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/prev"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/backward_unselected" />
+
+            <TextView
+                android:id="@+id/space2"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@android:drawable/ic_media_previous" />
+                android:layout_height="wrap_content"
+                android:text="   "
+                android:textColor="#759ba6"
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/play"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:background="@drawable/play" />
+
+            <TextView
+                android:id="@+id/space3"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@android:drawable/ic_media_play" />
+                android:layout_height="wrap_content"
+                android:text="   "
+                android:textColor="#759ba6"
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/next"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/forward_unselected" />
+
+            <TextView
+                android:id="@+id/spcae4"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@android:drawable/ic_media_next" />
+                android:layout_height="wrap_content"
+                android:text="   "
+                android:textColor="#759ba6"
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/stop"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@android:drawable/menu_frame" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/stop_unselected" />
 
 
         </LinearLayout>

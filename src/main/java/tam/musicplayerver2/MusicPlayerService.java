@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Created by Tam on 5/25/2017.
+ * Created by Tam on 5/24/2017.
+ *
+ * sill lack of Audio focus
  */
 
 public class MusicPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener{
@@ -34,6 +36,7 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
     private ArrayList<Track> tracks;
     private int trackPosition;
     private boolean isStarted = true;
+    private int resumePosition;
 
     ///when create service
    /* @Override
@@ -145,10 +148,76 @@ public class MusicPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void go(){
         mediaPlayer.start();
+    }*/
+
+    /*public void playMedia() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
     }
 
+    public void stopMedia() {
+        if (mediaPlayer == null) return;
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+        }
+    }
+
+    public void pauseMedia() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            resumePosition = mediaPlayer.getCurrentPosition();
+        }
+    }
+
+    public void resumeMedia() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo(resumePosition);
+            mediaPlayer.start();
+        }
+    }
+
+    public void playNext()
+    {
+        trackPosition++;
+        if(trackPosition > tracks.size())
+        {
+            trackPosition = 0;
+        }
+        playTrack();
+    }
+
+    public void playPrev()
+    {
+        trackPosition--;
+        if(trackPosition < 0){
+            trackPosition = tracks.size() - 1;
+        }
+
+        playTrack();
+    }
+
+    public void replay()
+    {
+        stopMedia();
+        playMedia();
+    }
+
+    public void shuffle()
+    {
+        rand = new Random();
+        trackPosition = rand.nextInt(tracks.size());
+        playTracks();
+    }
+
+    public int getPosition()
+    {
+        return trackPosition;
+    }*/
 
 
-*/
+
+
+
 
 }

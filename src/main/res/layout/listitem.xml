@@ -25,7 +25,8 @@
             android:layout_weight="1.0"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textSize="15dip" />
+            android:textSize="15dip"
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/duration"
@@ -34,7 +35,8 @@
             android:ellipsize="end"
             android:gravity="right"
             android:singleLine="true"
-            android:textSize="15dip" />
+            android:textSize="15dip"
+            android:textColor="@android:color/white"/>
     </LinearLayout>
 
 
