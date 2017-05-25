@@ -1,10 +1,14 @@
 package tam.musicplayerver2;
 
 import android.app.ListActivity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -26,13 +31,13 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends ListActivity implements MediaController.MediaPlayerControl{
 
     private static final int UPDATE_FREQUENCY = 500;
     private static final int STEP_VALUE = 4000;
 
     private MediaCursorAdapter mediaAdapter = null;
-    private TextView selelctedFile = null;
+    public TextView selelctedFile = null;
     private SeekBar seekbar = null;
     private MediaPlayer mediaplayer = null;
     private ImageButton playButton = null;
@@ -40,12 +45,18 @@ public class MainActivity extends ListActivity {
     private ImageButton nextButton = null;
     private ImageButton repeatButton = null;
     private ImageButton stopButton = null;
+    private boolean isStarted = true;
+
+
     private ArrayList<Track> tracks;
     private int n_t = 0;
     private Random rand;
+    private Intent intent;
+    private MusicPlayerService musicService;
+    private boolean bound=false;
 
 
-    private boolean isStarted = true;
+   // private boolean isStarted = true;
     private String currentFile = "";
     private boolean isMoveingSeekBar = false;
 
@@ -77,13 +88,13 @@ public class MainActivity extends ListActivity {
         mediaplayer.setOnErrorListener(onError);
         seekbar.setOnSeekBarChangeListener(seekBarChanged);
 
+        tracks = new ArrayList<Track>();
+
         Cursor cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 
-        if (null != cursor) {
-
-           // tracks = new ArrayList<Track>();
-            cursor.moveToFirst();
-           /* while(cursor.moveToNext()){
+        if (null != cursor && cursor.moveToFirst() )
+        {
+           while(cursor.moveToNext()){
                 long tid = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
                 String ttitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                 String tartist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
@@ -92,8 +103,9 @@ public class MainActivity extends ListActivity {
                 n_t++;
 
                 tracks.add(new Track(tid, ttitle, tartist, talbum, tdescription));
-            }*/
-           // cursor.moveToFirst();
+            }
+
+            cursor.moveToFirst();
             mediaAdapter = new MediaCursorAdapter(this, R.layout.listitem, cursor);
 
             setListAdapter(mediaAdapter);
@@ -106,6 +118,38 @@ public class MainActivity extends ListActivity {
         }
 
     }
+///////////////////////////////////service relation
+
+
+    /////////service binder
+    /*private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicPlayerService.MediaBinder binder = (MusicPlayerService.MediaBinder) service;
+            musicService = binder.getService();
+            musicService.getTracksListFromMain(tracks);     //pass track to service
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            bound = false;
+        }
+    };
+    ////////////service start!!!
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        if(intent == null)
+        {
+            intent = new Intent(this, MusicPlayerService.class);
+            bindService(intent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(intent);
+        }
+    }*/
+    /////////
+    ////////////////////////////////////////////
 
     @Override
     protected void onListItemClick(ListView list, View view, int position, long id) {
@@ -128,14 +172,13 @@ public class MainActivity extends ListActivity {
         mediaplayer = null;
     }
 
-    private void startPlay(String file) {
+    /////////////////////////////////////////////////
+
+    public void startPlay(String file) {
         Log.i("Selected: ", file);
 
         selelctedFile.setText(file);
         seekbar.setProgress(0);
-
-        mediaplayer.stop();
-        mediaplayer.reset();
 
         try {
             mediaplayer.setDataSource(file);
@@ -152,10 +195,11 @@ public class MainActivity extends ListActivity {
         seekbar.setMax(mediaplayer.getDuration());
         playButton.setImageResource(android.R.drawable.ic_media_pause);
         updatePosition();
+
         isStarted = true;
     }
 
-    private void stopPlay() {
+    public void stopPlay() {
         mediaplayer.stop();
         mediaplayer.reset();
         playButton.setImageResource(android.R.drawable.ic_media_play);
@@ -165,13 +209,75 @@ public class MainActivity extends ListActivity {
         isStarted = false;
     }
 
-    private void updatePosition() {
+
+    ///////////////////////////////////
+
+    public void updatePosition() {
         handler.removeCallbacks(updatePositionRunnable);
 
         seekbar.setProgress(mediaplayer.getCurrentPosition());
 
         handler.postDelayed(updatePositionRunnable, UPDATE_FREQUENCY);
     }
+
+
+    //////////////////provide control for user
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return 0;
+    }
+
+    @Override
+    public void seekTo(int pos) {
+
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return false;
+    }
+
+    @Override
+    public int getAudioSessionId() {
+        return 0;
+    }
+
+    ///////////////////////////////////
 
     private class MediaCursorAdapter extends SimpleCursorAdapter {
 
@@ -248,6 +354,8 @@ public class MainActivity extends ListActivity {
                     mediaplayer.pause();
                     mediaplayer.seekTo(seekto);
                     mediaplayer.start();
+
+
 
 
                     break;

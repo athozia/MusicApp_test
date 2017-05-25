@@ -35,7 +35,7 @@
 
         <SeekBar
             android:id="@+id/seekbar"
-            style="@android:style/Widget.DeviceDefault.Light.SeekBar"
+
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:max="100"
