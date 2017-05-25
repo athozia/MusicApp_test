@@ -1,4 +1,5 @@
 ver-0.1.0
+- already merged
 - decrease object in activity_main
 - major bug fix in MainActivity and MusicPlayerService
 - MusicController now is not a major componet, but will be implemented later (currently, almost basic functions are already implemented without the use of MusicController)
